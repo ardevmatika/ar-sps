@@ -9,3 +9,5 @@ Tampilan dan alur penggunaan aplikasi yang disederhanakan tetapi tetap mengedepa
 
 Keamanan
 Keamanan merupakan faktor yang sangat penting untuk setiap aplikasi web, AR-SPS dibagun menggunakan teknologi ASP .NET MVC disertai dengan hash string untuk password login aplikasinya yang tentunya dengan tingkat keamanan yang sudah tidak diragukan lagi.
+
+https://ardevmatika.com
