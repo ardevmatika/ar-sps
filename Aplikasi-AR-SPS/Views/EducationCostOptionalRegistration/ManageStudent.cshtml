@@ -1,0 +1,258 @@
+﻿@model ClassLibrary.Service.EducationCostOptionalRegistrationModule.Models.EducationCostOptionalSearchStudentFormVM
+@using ClassLibrary.Service.EducationCostOptionalRegistrationModule.Models
+@using ClassLibrary.Entities.Models
+@using WebApplication.Web.UI.Helper
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Biaya Pendidikan Pilihan - Registrasi dan Batal Registrasi";
+}
+
+@{
+    var headerStudent = new Student();
+}
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    <h2>Biaya Pendidikan Pilihan</h2>
+    <div class="form-horizontal">
+        <h4> Detail Biaya</h4>
+        <hr />
+
+        @if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+        {
+            <div class="alert alert-success alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                @ViewBag.messageInfo
+            </div>
+        }
+        @Html.HiddenFor(model => model.EducationCostId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationCost.EducationYear.EducationYearName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationCost.EducationYear.EducationYearName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationCost.CostName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationCost.CostName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationCost.CostType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationCost.CostTypeName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationCost.Cost, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationCost.Cost)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationCost.DueDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationCost.DueDate)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationCost.ClassLevel.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationCost.ClassLevel.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationCost.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationCost.IsActive)
+            </div>
+        </div>
+        <br />
+        <br />
+        <h4>Registrasi dan Batal Registrasi - Cari Siswa</h4>
+        <hr />
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.EducationCost.ClassLevel, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EducationCost.ClassLevel.Name, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.EducationCost.ClassLevel.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ClassGroupId, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.ClassGroupId, Model.ClassGroups(), "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ClassGroupId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EducationCostOptionalStatus, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.EducationCostOptionalStatus, EnumHelper.GetSelectList(typeof(EducationCostOptionalStatusEnum)), "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EducationCostOptionalStatus, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.IdentificationNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.IdentificationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.IdentificationNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NationalIdentificationNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NationalIdentificationNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Cari" class="btn btn-default" />
+                <input type="button" value="Batal" onclick="window.location.href='@Url.Action("ManageStudent", new { id = Model.EducationCostId })'" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+<table id="tableData" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                @GeneralHelper.DisplayName(headerStudent.GetType(), nameof(headerStudent.Name))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(headerStudent.GetType(), nameof(headerStudent.IdentificationNumber))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(headerStudent.GetType(), nameof(headerStudent.NationalIdentificationNumber))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(headerStudent.GetType(), nameof(headerStudent.BiologicalMotherName))
+            </th>
+            <th>
+                Kelas
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Registrasi / Batal Registrasi
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.IdentificationNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.NationalIdentificationNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.BiologicalMotherName)
+                </td>
+                <td>
+                    @foreach (var enrollment in item.Student.Enrolments.Where(e => e.ClassGroup.ClassLevel.ClassLevelId == Model.EducationCost.ClassLevel.ClassLevelId).ToList())
+                    {
+                        @enrollment.ClassGroup.ClassGroupName <br />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationCostOptionalStatusName)
+                </td>
+                <td>
+                    @using (Html.BeginForm(null, null, FormMethod.Post))
+                    {
+                        var modelRegistrationForm = new EducationCostOptionalRegisterUnRegisterFormVM();
+
+                        modelRegistrationForm.SearchStudentFormVM = Model;
+
+                        modelRegistrationForm.EducationCostId = Model.EducationCostId;
+                        modelRegistrationForm.EducationCostOptionalStatus = item.EducationCostOptionalStatus;
+                        modelRegistrationForm.StudentId = item.Student.StudentId;
+
+                        @Html.HiddenFor(model => modelRegistrationForm.SearchStudentFormVM.ClassGroupId);
+                        @Html.HiddenFor(model => modelRegistrationForm.SearchStudentFormVM.CurrentPage);
+                        @Html.HiddenFor(model => modelRegistrationForm.SearchStudentFormVM.EducationCostId);
+                        @Html.HiddenFor(model => modelRegistrationForm.SearchStudentFormVM.IdentificationNumber);
+                        @Html.HiddenFor(model => modelRegistrationForm.SearchStudentFormVM.Name);
+                        @Html.HiddenFor(model => modelRegistrationForm.SearchStudentFormVM.NationalIdentificationNumber);
+                        @Html.HiddenFor(model => modelRegistrationForm.SearchStudentFormVM.PageSize);
+
+                        @Html.HiddenFor(model => modelRegistrationForm.StudentId);
+                        @Html.HiddenFor(model => modelRegistrationForm.EducationCostId);
+                        @Html.HiddenFor(model => modelRegistrationForm.EducationCostOptionalStatus);
+
+                        if (item.EducationCostOptionalStatus == EducationCostOptionalStatusEnum.Registered)
+                        {
+                            <input name="submit" type="submit" value="Batal Registrasi" class="btn btn-default" />
+                        }
+                        else
+                        {
+                            <input name="submit" type="submit" value="Registrasi" class="btn btn-default" />
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+Page @(Model.Results.PageCount < Model.Results.PageNumber ? 0 : Model.Results.PageNumber) of @Model.Results.PageCount
+
+@Html.PagedListPager(Model.Results, page => Url.Action("Index", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary() { { nameof(Model.CurrentPage), page } })))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 6 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

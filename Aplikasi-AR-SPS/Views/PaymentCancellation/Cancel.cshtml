@@ -1,0 +1,268 @@
+﻿@model PaymentVM
+@using ClassLibrary.Service.PaymentModule.Models
+@using ClassLibrary.Service.PaymentCancellationModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Pembayaran - Detail Siswa dan Rangkuman Pembayaran";
+}
+
+@{
+    var header = new PaymentDetailVM();
+}
+
+<h2>Pembayaran</h2>
+<h4>Detail Siswa dan Detail Pembayaran</h4>
+<hr />
+@if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+{
+    <div class="alert alert-success alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        @ViewBag.messageInfo
+    </div>
+}
+<div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.Name)
+            <br />
+            @Html.EditorFor(model => model.Student.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.IdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.IdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.NationalIdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BiologicalMotherName)
+            <br />
+            @Html.EditorFor(model => model.Student.BiologicalMotherName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.PlaceOfBirth)
+            <br />
+            @Html.EditorFor(model => model.Student.PlaceOfBirth, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BirthDate)
+            <br />
+            @{
+                var BirthDate = Model.Student.BirthDate.ToString("yyyy-MM-dd");
+            }
+            @Html.EditorFor(model => BirthDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="form-group">
+        <table class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Tahun Ajaran
+                    </th>
+                    <th>
+                        Kelas
+                    </th>
+                    <th>
+                        Efektif
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Enrollments)
+                {
+                    <tr>
+                        <td>
+                            @item.ClassGroup.EducationYear.EducationYearName
+                        </td>
+                        <td>
+                            @item.ClassGroup.ClassLevel.Name - @item.ClassGroup.ClassGroupName
+                        </td>
+                        <td>
+                            @(item.EffectiveMonthFromName + " - " + item.EffectiveMonthToName)
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<table id="tableData" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.EducationCost))
+            </th>
+            <th class="currency-right">
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.CostAmount))
+            </th>
+            <th class="currency-right">
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.PreviousPaymentAmount))
+            </th>
+            <th class="currency-right">
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.BillAmount))
+            </th>
+            <th class="currency-right">
+                Pembayaran
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int educationYearIdPrev = 0;
+            int classLevelIdPrev = 0;
+        }
+
+        @for (int i = 0; i < Model.PaymentDetailVMs.Count(); i++)
+        {
+            if (educationYearIdPrev != Model.PaymentDetailVMs[i].EducationYear.EducationYearId && classLevelIdPrev != Model.PaymentDetailVMs[i].EducationCost.ClassLevel.ClassLevelId)
+            {
+                <tr>
+                    <td colspan="6" style="text-align: center; background-color: whitesmoke; font-weight: bold;">
+                        @Model.PaymentDetailVMs[i].EducationYear.EducationYearName | @Model.PaymentDetailVMs[i].EducationCost.ClassLevel.Name
+                    </td>
+                </tr>
+            }
+            educationYearIdPrev = Model.PaymentDetailVMs[i].EducationYear.EducationYearId;
+            classLevelIdPrev = Model.PaymentDetailVMs[i].EducationCost.ClassLevel.ClassLevelId;
+
+            <tr>
+                <td>
+                    @Model.PaymentDetailVMs[i].EducationCost.CostName
+                </td>
+                <td class="currency-right">
+                    @Html.DisplayFor(m => Model.PaymentDetailVMs[i].CostAmount)
+                </td>
+                <td class="currency-right">
+                    @Html.DisplayFor(m => Model.PaymentDetailVMs[i].PreviousPaymentAmount)
+                </td>
+                <td class="currency-right">
+                    @Html.DisplayFor(m => Model.PaymentDetailVMs[i].BillAmount)
+                </td>
+                <td class="currency-right">
+                    @Html.DisplayFor(m => Model.PaymentDetailVMs[i].PaymentAmount)
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.LabelFor(model => model.PaymentAmmountSum)
+            </td>
+            <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.DisplayFor(model => model.PaymentAmmountSum)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.LabelFor(model => model.MoneyReceivedAmount)
+            </td>
+            <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.DisplayFor(model => model.MoneyReceivedAmount)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.LabelFor(model => model.Change)
+            </td>
+            <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.DisplayFor(model => model.Change)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.LabelFor(model => model.PaymentOfficer)
+            </td>
+            <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.DisplayFor(model => model.PaymentOfficer.Name)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.LabelFor(model => model.PaymentDate)
+            </td>
+            <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.DisplayFor(model => model.PaymentDate)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                No Kwitansi
+            </td>
+            <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                @Html.DisplayFor(model => model.PaymentId)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="5" style="text-align: left; background-color: whitesmoke; font-weight: bold;">
+                @Html.LabelFor(model => model.Notes) :
+                @Html.DisplayFor(model => model.Notes)
+            </td>
+        </tr>
+    </tbody>
+</table>
+@{
+    var modelPaymentCancellation = new PaymentCancellationCreateFormVM();
+    modelPaymentCancellation.PaymentId = Model.PaymentId;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => modelPaymentCancellation.PaymentId)
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => modelPaymentCancellation.CancellationReason, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => modelPaymentCancellation.CancellationReason, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => modelPaymentCancellation.CancellationReason, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input name="submit" type="submit" value="Batalkan Pembayaran" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+@Html.ActionLink("Kembali ke daftar", "Index", new { id = Model.StudentId })
+
+<style type="text/css">
+    .currency-right {
+        text-align: right;
+    }
+
+    .reg_name {
+        max-width: 200px;
+    }
+
+    #footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        background-color: whitesmoke;
+        padding: inherit;
+        vertical-align: middle;
+    }
+</style>

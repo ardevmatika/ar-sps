@@ -1,0 +1,91 @@
+﻿@model ClassLibrary.Service.DatabaseConnectionModule.Models.DatabaseConnectionFormVM
+@using ClassLibrary.Entities.Models
+
+@{
+    ViewBag.Title = "Pengaturan - Koneksi Database";
+}
+
+<h2>Pengaturan</h2>
+
+@using (Html.BeginForm("ChangeDbConnectionSave", "DatabaseConnection",FormMethod.Post, new { @id = "DatabaseConnectionFormVM" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row form-horizontal">
+        <div class="col-md-12">
+            <h4>Koneksi Database</h4>
+            <hr />
+            @if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+            {
+                <div class="alert alert-success alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    @ViewBag.messageInfo
+                </div>
+            }
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DatabaseType, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.DatabaseType, EnumHelper.GetSelectList(typeof(DatabaseTypeEnum)), "", new { @class = "form-control", @onChange = "databaseTypeChange(this.value)" })
+                    @Html.ValidationMessageFor(model => model.DatabaseType, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="col-md-12 form-group">
+                @Html.LabelFor(model => model.MSSQLLocalDBConnectionString, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.MSSQLLocalDBConnectionString, new { @class = "form-control", @rows = "5" })
+                    @Html.ValidationMessageFor(model => model.MSSQLLocalDBConnectionString, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MSSQLServerConnectionString, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.MSSQLServerConnectionString, new { @class = "form-control", @rows = "5" })
+                    @Html.ValidationMessageFor(model => model.MSSQLServerConnectionString, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MYSQLConnectionString, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.MYSQLConnectionString, new { @class = "form-control", @rows = "5" })
+                    @Html.ValidationMessageFor(model => model.MYSQLConnectionString, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Simpan" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        databaseTypeChange(@((int?)Model.DatabaseType));
+        $("#DatabaseConnectionFormVM").submit(function () {
+            return confirm("Apakah anda yakin akan mengubah koneksi database? perubahan mungkin akan menyebabkan data sebelumnya tidak bisa diakses.");
+        });
+    });
+
+    function databaseTypeChange(databaseTypeValue) {
+        $("#MSSQLLocalDBConnectionString").attr('readonly', true);
+        $("#MSSQLServerConnectionString").attr('readonly', true);
+        $("#MYSQLConnectionString").attr('readonly', true);
+
+        if (databaseTypeValue == "0") {
+            $("#MSSQLLocalDBConnectionString").removeAttr('readonly');
+        }
+        if (databaseTypeValue == "1") {
+            $("#MSSQLServerConnectionString").removeAttr('readonly');
+        }
+        if (databaseTypeValue == "2") {
+            $("#MYSQLConnectionString").removeAttr('readonly');
+        }
+    }
+</script>

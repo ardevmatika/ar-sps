@@ -1,0 +1,129 @@
+﻿@model ClassLibrary.Service.ClassGroupStudentModule.Models.EnrollmentStudentVM
+@using ClassLibrary.Service.PaymentModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Pindah Kelas - Detail Kelas Siswa";
+}
+
+<h2>Pindah Kelas</h2>
+<h4>Detail Kelas Siswa</h4>
+<hr />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+<div style="margin-bottom: 200px;">
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.Name)
+            <br />
+            @Html.EditorFor(model => model.Student.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.IdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.IdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.NationalIdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BiologicalMotherName)
+            <br />
+            @Html.EditorFor(model => model.Student.BiologicalMotherName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.PlaceOfBirth)
+            <br />
+            @Html.EditorFor(model => model.Student.PlaceOfBirth, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BirthDate)
+            <br />
+            @{
+                var BirthDate = Model.Student.BirthDate.ToString("yyyy-MM-dd");
+            }
+            @Html.EditorFor(model => BirthDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+</div>
+
+<table id="tableData" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Tahun Ajaran
+            </th>
+            <th>
+                Tingkat Kelas
+            </th>
+            <th>
+                Kelas
+            </th>
+            <th>
+                Bulan Efektif Dari
+            </th>
+            <th>
+                Bulan Efektif Sampai
+            </th>
+            <th>
+                Pindah Kelas
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Enrollments)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassGroup.EducationYear.EducationYearName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassGroup.ClassLevel.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassGroup.ClassGroupName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EffectiveMonthFromName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EffectiveMonthToName)
+                </td>
+                <td>
+                    @if (item.ClassGroup.EducationYear.MonthTo == item.EffectiveMonthTo && item.ClassGroup.EducationYear.YearTo == item.EffectiveYearTo)
+                    {
+                        @Html.ActionLink("Pindah Kelas", "ChangeClassForm", new { StudentId = item.Student.StudentId, EnrollmentId = item.EnrollmentId }, new { @class = "btn btn-default" })
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.ActionLink("Kembali ke daftar","ChangeClassSearchStudent")
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 5 },
+                { responsivePriority: 3, targets: 1 },
+                { responsivePriority: 4, targets: 2 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

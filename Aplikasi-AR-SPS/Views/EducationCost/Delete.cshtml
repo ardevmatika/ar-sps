@@ -1,0 +1,105 @@
+﻿@model ClassLibrary.Service.EducationCostModule.Models.EducationCostEditFormVM
+
+@{
+    ViewBag.Title = "Hapus - Biaya Pendidikan";
+}
+
+<h2>Hapus</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Biaya Pendidikan</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.EducationCostId)
+
+        @if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+        {
+            <div class="alert alert-success alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                @ViewBag.messageInfo
+            </div>
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationYearId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.EducationYear.EducationYearName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CostType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.CostTypeName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CostName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.CostName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CostStr, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Cost)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DueDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.DueDate)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ClassLevelId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.ClassLevel.Name)
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.IsActive)
+            </div>
+        </div>
+
+
+        @if (Model.IsDeletable())
+        {
+            <div class="form-group">
+                @Html.Label("Apakah Anda yakin akan menghapus data ini?", htmlAttributes: new { @class = "control-label" })
+                <br /><br />
+                <div class="col-md-offset-2 col-md-10">
+                    <input name="submit" type="submit" value="Batal" class="btn btn-default" />
+                    <input name="submit" type="submit" value="Hapus" class="btn btn-default" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.Label("Data ini hanya bisa dinonaktifkan, apakah Anda yakin akan menonaktifkan data ini?", htmlAttributes: new { @class = "control-label" })
+                <br /><br />
+                <div class="col-md-offset-2 col-md-10">
+                    <input name="submit" type="submit" value="Batal" class="btn btn-default" />
+                    <input name="submit" type="submit" value="Nonaktifkan" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>

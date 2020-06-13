@@ -1,0 +1,165 @@
+﻿@model ClassLibrary.Service.EducationCostModule.Models.EducationCostSearchFormVM
+@using WebApplication.Web.UI.Helper
+@using ClassLibrary.Entities.Models
+@using ClassLibrary.Service.EducationCostModule.Models
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Daftar - Biaya Pendidikan";
+}
+
+<h2>Daftar</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Biaya Pendidikan | @Html.ActionLink("Tambah Data", "Create")</h4>
+        <hr />
+        @if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+        {
+            <div class="alert alert-success alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                @ViewBag.messageInfo
+            </div>
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationYearId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.EducationYearId, Model.EducationYears(), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EducationYearId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ClassLevelId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ClassLevelId, Model.ClassLevels(), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ClassLevelId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CostType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.CostType, EnumHelper.GetSelectList(typeof(CostTypeEnum)), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CostType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CostName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CostName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CostName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Cari" class="btn btn-default" />
+                <input type="button" value="Batal" onclick="window.location.href='@Url.Action("Index")'" class="btn btn-default" />
+            </div>
+        </div>
+        <hr />
+    </div>
+}
+
+@{ var header = new EducationCostSearchDataVM(); }
+<table id="tableData" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.CostName))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.EducationYear))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassLevel))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.CostType))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Cost))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.DueDate))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.IsActive))
+            </th>
+            <th>
+                Tindakan
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CostName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationYear.EducationYearName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassLevel.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CostTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cost)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DueDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Menu
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>@Html.ActionLink("Edit", "Edit", new { id = item.EducationCostId })</li>
+                            <li>@Html.ActionLink("Detail", "Details", new { id = item.EducationCostId }) </li>
+                            <li>@Html.ActionLink("Hapus", "Delete", new { id = item.EducationCostId })</li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+Page @(Model.Results.PageCount < Model.Results.PageNumber ? 0 : Model.Results.PageNumber) of @Model.Results.PageCount
+
+@Html.PagedListPager(Model.Results, page => Url.Action("Index", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary() { { nameof(Model.CurrentPage), page } })))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 7 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

@@ -1,0 +1,292 @@
+﻿@model BillPaymentFormVM
+@using ClassLibrary.Service.PaymentModule.Models
+@using ClassLibrary.Entities.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Pembayaran - Detail Siswa dan Tagihan";
+}
+
+@{
+    var header = new BillDataVM();
+}
+
+<h2>Pembayaran</h2>
+<h4>Detail Siswa dan Tagihan</h4>
+<hr />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+<div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.Name)
+            <br />
+            @Html.EditorFor(model => model.Student.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.IdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.IdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.NationalIdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BiologicalMotherName)
+            <br />
+            @Html.EditorFor(model => model.Student.BiologicalMotherName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.PlaceOfBirth)
+            <br />
+            @Html.EditorFor(model => model.Student.PlaceOfBirth, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BirthDate)
+            <br />
+            @{
+                var BirthDate = Model.Student.BirthDate.ToString("yyyy-MM-dd");
+            }
+            @Html.EditorFor(model => BirthDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="form-group">
+        <table class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Tahun Ajaran
+                    </th>
+                    <th>
+                        Kelas
+                    </th>
+                    <th>
+                        Efektif
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Enrollments)
+                {
+                    <tr>
+                        <td>
+                            @item.ClassGroup.EducationYear.EducationYearName
+                        </td>
+                        <td>
+                            @item.ClassGroup.ClassLevel.Name - @item.ClassGroup.ClassGroupName
+                        </td>
+                        <td>
+                            @(item.EffectiveMonthFromName + " - " + item.EffectiveMonthToName)
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+
+@using (Html.BeginForm(null, null, FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.StudentId);
+    <table id="tableData" class="table nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.EducationCost))
+                </th>
+                <th class="currency-right">
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.CostAmount))
+                </th>
+                <th class="currency-right">
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.PreviousPaymentAmount))
+                </th>
+                <th class="currency-right">
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.BillAmount))
+                </th>
+                <td>
+                </td>
+                <th class="currency-right">
+                    Input Pembayaran (Isi yang akan dibayar saja)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int educationYearIdPrev = 0;
+                int classLevelIdPrev = 0;
+            }
+
+            @for (int i = 0; i < Model.BillDataVMs.Count(); i++)
+            {
+                if (educationYearIdPrev != Model.BillDataVMs[i].EducationYear.EducationYearId && classLevelIdPrev != Model.BillDataVMs[i].EducationCost.ClassLevel.ClassLevelId)
+                {
+                    <tr>
+                        <td colspan="6" style="text-align: center; background-color: whitesmoke; font-weight: bold;">
+                            @Model.BillDataVMs[i].EducationYear.EducationYearName | @Model.BillDataVMs[i].EducationCost.ClassLevel.Name
+                        </td>
+                    </tr>
+                }
+                educationYearIdPrev = Model.BillDataVMs[i].EducationYear.EducationYearId;
+                classLevelIdPrev = Model.BillDataVMs[i].EducationCost.ClassLevel.ClassLevelId;
+                <tr>
+                    <td>
+                        @Model.BillDataVMs[i].EducationCost.CostName
+
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].BillAmount)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationCost.EducationCostId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationCostId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationCostId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationYearId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].IsBilled)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].PreviousPaymentAmount)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].StudentId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].CostAmount)
+                    </td>
+                    <td class="currency-right">
+                        @Html.DisplayFor(m => Model.BillDataVMs[i].CostAmount)
+                    </td>
+                    <td class="currency-right">
+                        @Html.DisplayFor(m => Model.BillDataVMs[i].PreviousPaymentAmount)
+                    </td>
+                    <td class="currency-right">
+                        @Html.DisplayFor(m => Model.BillDataVMs[i].BillAmount)
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-default" aria-label="Left Align" onclick="fillPaymentAmmount(@i)">
+                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                    <td class="currency-right">
+                        @Html.EditorFor(model => Model.BillDataVMs[i].PaymentAmountStr, new { htmlAttributes = new { @class = "form-control currency PaymentAmountStr" } })
+                        @Html.ValidationMessageFor(model => Model.BillDataVMs[i].PaymentAmountStr, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <br />
+    <div id="footer">
+        <div class="container body-content" style="padding:10px; text-align: center;">
+            <div class="form-inline">
+                <div class="form-group" style="text-align: left;">
+                    @Html.LabelFor(model => model.PaymentAmmountSumStr)
+                    <br />
+                    @Html.EditorFor(model => model.PaymentAmmountSumStr, new { htmlAttributes = new { @class = "form-control currency", @readonly = "readonly" } })
+                    <br />
+                    @Html.ValidationMessageFor(model => model.PaymentAmmountSumStr, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    @Html.LabelFor(model => model.MoneyReceivedAmountStr)
+                    <br />
+                    @Html.EditorFor(model => model.MoneyReceivedAmountStr, new { htmlAttributes = new { @class = "form-control currency", } })
+                    <br />
+                    @Html.ValidationMessageFor(model => model.MoneyReceivedAmountStr, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    @Html.LabelFor(model => model.ChangeStr)
+                    <br />
+                    @Html.EditorFor(model => model.ChangeStr, new { htmlAttributes = new { @class = "form-control currency", @readonly = "readonly" } })
+                    <br />
+                    @Html.ValidationMessageFor(model => model.ChangeStr, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    @Html.LabelFor(model => model.Notes)
+                    <br />
+                    @Html.EditorFor(model => model.Notes, new { htmlAttributes = new { @class = "form-control" } })
+                    <br />
+                    @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group" style="text-align: left; vertical-align: middle;">
+                    <br />
+                    <button type="submit" class="btn btn-default">Proses Pembayaran</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style type="text/css">
+    .currency-right {
+        text-align: right;
+    }
+
+    .reg_name {
+        max-width: 200px;
+    }
+
+    #footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        background-color: whitesmoke;
+        padding: inherit;
+        vertical-align: middle;
+    }
+</style>
+<script type="text/javascript">
+    function fillPaymentAmmount(index) {
+        var billAmt = $('#BillDataVMs_' + index + '__BillAmount').val();
+        $('#BillDataVMs_' + index + '__PaymentAmountStr').val(billAmt);
+        $('#BillDataVMs_' + index + '__PaymentAmountStr').focusin();
+        $('#BillDataVMs_' + index + '__PaymentAmountStr').focusout();
+        sumPaymentAmount();
+    }
+
+    function sumPaymentAmount() {
+        var sum = 0;
+        $('.form-control.currency.PaymentAmountStr').each(function () {
+            if (this.value) {
+                var strTxt = this.value;
+                if (this.value.includes(".")) {
+                    strTxt = this.value.split(".").join("");
+                }
+                console.log(strTxt);
+                strTxt = strTxt.replace(",", ".");
+                var currentAmt = parseFloat(strTxt);
+                sum = sum + currentAmt;
+            }
+
+        });
+        $('#PaymentAmmountSumStr').val(sum);
+        $('#PaymentAmmountSumStr').focusin();
+        $('#PaymentAmmountSumStr').focusout();
+
+        if ($('#MoneyReceivedAmountStr').val()) {
+            calculateChange()
+        }
+    }
+    function calculateChange() {
+        var strMoneyReceivedAmountStr = $('#MoneyReceivedAmountStr').val().split(".").join("");
+        strMoneyReceivedAmountStr = strMoneyReceivedAmountStr.replace(",", ".");
+        var strMoneyReceivedAmountVal = parseFloat(strMoneyReceivedAmountStr);
+
+        var strPaymentAmmountSumStr = $('#PaymentAmmountSumStr').val().split(".").join("");
+        strPaymentAmmountSumStr = strPaymentAmmountSumStr.replace(",", ".");
+        var strPaymentAmmountSumVal = parseFloat(strPaymentAmmountSumStr);
+
+        var valChange = strMoneyReceivedAmountVal - strPaymentAmmountSumVal;
+        $('#ChangeStr').val(valChange);
+        $('#ChangeStr').focusin();
+        $('#ChangeStr').focusout();
+        $('#ChangeStr').focusin();
+        $('#ChangeStr').focusout();
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".form-control.currency.PaymentAmountStr").change(function () {
+            sumPaymentAmount();
+        });
+        $("#MoneyReceivedAmountStr").change(function () {
+            calculateChange()
+        });
+    });
+</script>

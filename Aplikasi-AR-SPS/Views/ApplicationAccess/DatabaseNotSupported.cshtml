@@ -1,0 +1,52 @@
+﻿@using ClassLibrary.Service.ActivationModule.Models
+@using WebApplication.Web.UI.Models
+
+@{
+    ViewBag.Title = "Database Tidak Didukung";
+}
+@{
+    ActivationDataVM activationData = (ActivationDataVM)Session[SessionEnum.ACTIVATION_DATA.ToString()];
+}
+<h2>Database Tidak Didukung</h2>
+<p>
+    Database yang digunakan tidak didukung oleh aplikasi dengan level lisensi yang terpasang.
+</p>
+<dl class="dl-horizontal">
+    <dt>
+        Level Lisensi Saat Ini
+    </dt>
+    <dd>
+        @activationData.LicenseLevel
+    </dd>
+    <dt>
+        Database yang digunakan
+    </dt>
+    <dd>
+        @activationData.DatabaseType
+    </dd>
+</dl>
+<p>
+    Dukungan database berdasarkan lisensi aplikasi :<br />
+    <table>
+        <tr>
+            <td>LEVEL_1</td>
+            <td>:</td>
+            <td>SQL Server LocalDB</td>
+        </tr>
+        <tr>
+            <td>LEVEL_2</td>
+            <td>:</td>
+            <td>SQL Server LocalDB</td>
+        </tr>
+        <tr>
+            <td>LEVEL_3</td>
+            <td>:</td>
+            <td>SQL Server LocalDB, SQL Server (Database Server)</td>
+        </tr>
+        <tr>
+            <td>LEVEL_4</td>
+            <td>:</td>
+            <td>SQL Server LocalDB, SQL Server (Database Server), Mysql</td>
+        </tr>
+    </table>
+</p>

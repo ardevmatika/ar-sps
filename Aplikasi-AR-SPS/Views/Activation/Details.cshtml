@@ -1,0 +1,112 @@
+﻿@model ClassLibrary.Service.ActivationModule.Models.ActivationDataVM
+
+@{
+    ViewBag.Title = "Aktivasi - Aplikasi";
+}
+
+<h2>Aktivasi</h2>
+
+<div>
+    <h4>Aplikasi</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PreviousDeviceId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PreviousDeviceId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SerialNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SerialNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.License)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.License)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LicenseLevel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LicenseLevel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StatusName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActivationDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActivationDate)
+        </dd>
+
+        <dt>
+
+        </dt>
+        <dd>
+            @Html.ActionLink(Model.LicenseLevel == ClassLibrary.Service.ActivationModule.Models.LicenseLevelEnum.LEVEL_0 ? "Aktivasi" : "Update Lisensi", "Index", null, new { @class = "btn btn-default" })
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <h4>Detail Lisensi</h4>
+    <hr />
+    <table class="table table-bordered">
+        <tr>
+            <td>Level Lisensi</td>
+            <td>Remote Akses</td>
+            <td>Dudungan Database</td>
+            <td>Fitur Tambahan</td>
+        </tr>
+        <tr>
+            <td>LEVEL_0 (uji coba)</td>
+            <td>Ya</td>
+            <td>SQL Server LocalDB, SQL Server (Database Server), Mysql. Penyimpanan data terbatas</td>
+            <td>Impor data siswa dari excel</td>
+        </tr>
+        <tr>
+            <td>LEVEL_1</td>
+            <td>Tidak</td>
+            <td>SQL Server LocalDB</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>LEVEL_2</td>
+            <td>Ya</td>
+            <td>SQL Server LocalDB</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>LEVEL_3</td>
+            <td>Ya</td>
+            <td>SQL Server LocalDB, SQL Server (Database Server)</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>LEVEL_4</td>
+            <td>Ya</td>
+            <td>SQL Server LocalDB, SQL Server (Database Server), Mysql</td>
+            <td>Impor data siswa dari excel</td>
+        </tr>
+    </table>
+</div>

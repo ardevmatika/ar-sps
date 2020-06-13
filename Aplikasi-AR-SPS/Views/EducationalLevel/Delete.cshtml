@@ -1,0 +1,155 @@
+﻿@model ClassLibrary.Service.EducationalLevelModule.Models.EducationalLevelDetailFormVM
+@using ClassLibrary.Service.EducationalLevelModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Detail - Jenjang Pendidikan";
+}
+
+<h2>Detail</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Jenjang Pendidikan</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.EducationalLevelId, new { htmlAttributes = new { @class = "form-control" } })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.Name)
+                @Html.DisplayFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Detail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Detail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Detail, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumberOfSchoolYears, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div>
+                    @Html.HiddenFor(model => model.NumberOfSchoolYears)
+                    @Html.DisplayFor(model => model.NumberOfSchoolYears, new { htmlAttributes = new { @class = "form-control col-md-5", @disabled = "disabled" } })
+                </div>
+                @Html.ValidationMessageFor(model => model.NumberOfSchoolYears, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumberOfSemestersPerSchoolYear, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.NumberOfSemestersPerSchoolYear, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NumberOfSemestersPerSchoolYear, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.IsActive)
+                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <br />
+
+        @if (Model.EducationalLevelDetailFormDetailClassLevelVMs != null)
+        {
+            <div>
+                @{ var header = new EducationalLevelDetailFormDetailClassLevelVM(); }
+                <table id="tableData" class="table nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                @GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassLevelOrder))
+                            </th>
+                            <th>
+                                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Name))
+                            </th>
+                            <th>
+                                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Detail))
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.EducationalLevelDetailFormDetailClassLevelVMs.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].ClassLevelId, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.HiddenFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].ClassLevelOrder, new { htmlAttributes = new { @class = "form-control" } })
+                                    Tahun Ajaran ke-@Html.DisplayFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].ClassLevelOrder)
+                                    @Html.ValidationMessageFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].ClassLevelOrder, "", new { @class = "text-danger" })
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].Name, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].Name, "", new { @class = "text-danger" })
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].Detail, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => Model.EducationalLevelDetailFormDetailClassLevelVMs[i].Detail, "", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (Model.IsDeletable())
+        {
+            <div class="form-group">
+                @Html.Label("Apakah Anda yakin akan menghapus data ini?", htmlAttributes: new { @class = "control-label" })
+                <br /><br />
+                <div class="col-md-offset-2 col-md-10">
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Cancel)" class="btn btn-default" />
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Delete)" class="btn btn-default" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.Label("Data ini hanya bisa dinonaktifkan (Karena terdapat data sekolah dan data kelas pada tingkat kelasnya), apakah Anda yakin akan menonaktifkan data ini?", htmlAttributes: new { @class = "control-label" })
+                <br /><br />
+                <div class="col-md-offset-2 col-md-10">
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Cancel)" class="btn btn-default" />
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Deactivate)" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 },
+                { responsivePriority: 3, targets: 2 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

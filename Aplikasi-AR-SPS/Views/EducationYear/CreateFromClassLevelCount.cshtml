@@ -1,0 +1,107 @@
+﻿@model ClassLibrary.Service.EducationYearModule.Models.EducationYearCreateFromVM
+@using ClassLibrary.Entities.Models
+@using ClassLibrary.Service.EducationYearModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Tambah - Tahun Ajaran";
+}
+
+<h2>Tambah</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Tahun Ajaran</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.SchoolId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.SchoolId)
+            @Html.DropDownListFor(model => model.SchoolId, Model.Schools(), "", new { @class = "form-control", @disabled = "disabled" })
+            @Html.ValidationMessageFor(model => model.SchoolId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MonthFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.MonthFrom)
+            @Html.DropDownListFor(model => model.MonthFrom, EnumHelper.GetSelectList(typeof(MonthEnum)), "", new { @class = "form-control", @disabled = "disabled" })
+            @Html.ValidationMessageFor(model => model.MonthFrom, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.YearFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.YearFrom)
+            @Html.EditorFor(model => model.YearFrom, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.YearFrom, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MonthTo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.MonthTo)
+            @Html.DropDownListFor(model => model.MonthTo, EnumHelper.GetSelectList(typeof(MonthEnum)), "", new { @class = "form-control", @disabled = "disabled" })
+            @Html.ValidationMessageFor(model => model.MonthTo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.YearTo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.YearTo)
+            @Html.EditorFor(model => model.YearTo, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.YearTo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    @{ var header = new EducationYearCreateFromClassLevelCountVM(); }
+
+    @if (Model.EducationYearCreateFromClassLevelCountVMs.Count() > 0)
+    {
+
+        <table id="tableData" class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>@GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassLevelId))</th>
+                    <th>@GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassLevelCount))</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @for (int i = 0; i < Model.EducationYearCreateFromClassLevelCountVMs.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.HiddenFor(model => Model.EducationYearCreateFromClassLevelCountVMs[i].ClassLevelId)
+                            @Html.DisplayFor(model => Model.EducationYearCreateFromClassLevelCountVMs[i].ClassLevelName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model.EducationYearCreateFromClassLevelCountVMs[i].ClassLevelId, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => Model.EducationYearCreateFromClassLevelCountVMs[i].ClassLevelCount, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model.EducationYearCreateFromClassLevelCountVMs[i].ClassLevelCount, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="@Model.GetEnumSubmitDisplayName(SubmitCreate.Back)" onclick="history.go(-1)" class="btn btn-default" />
+            <input type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitCreate.Next)" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>

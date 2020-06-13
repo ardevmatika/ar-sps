@@ -1,0 +1,231 @@
+﻿@model BillPaymentFormVM
+@using ClassLibrary.Service.PaymentModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Pembayaran - Detail Siswa dan Rangkuman Pembayaran";
+}
+
+@{
+    var header = new BillDataVM();
+}
+
+<h2>Pembayaran</h2>
+<h4>Detail Siswa dan Rangkuman Pembayaran</h4>
+<hr />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+<div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.Name)
+            <br />
+            @Html.EditorFor(model => model.Student.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.IdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.IdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.NationalIdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BiologicalMotherName)
+            <br />
+            @Html.EditorFor(model => model.Student.BiologicalMotherName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.PlaceOfBirth)
+            <br />
+            @Html.EditorFor(model => model.Student.PlaceOfBirth, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BirthDate)
+            <br />
+            @{
+                var BirthDate = Model.Student.BirthDate.ToString("yyyy-MM-dd");
+            }
+            @Html.EditorFor(model => BirthDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="form-group">
+        <table class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Tahun Ajaran
+                    </th>
+                    <th>
+                        Kelas
+                    </th>
+                    <th>
+                        Efektif
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Enrollments)
+                {
+                    <tr>
+                        <td>
+                            @item.ClassGroup.EducationYear.EducationYearName
+                        </td>
+                        <td>
+                            @item.ClassGroup.ClassLevel.Name - @item.ClassGroup.ClassGroupName
+                        </td>
+                        <td>
+                            @(item.EffectiveMonthFromName + " - " + item.EffectiveMonthToName)
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+
+@using (Html.BeginForm(null, null, FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.StudentId);
+    <table id="tableData" class="table nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.EducationCost))
+                </th>
+                <th class="currency-right">
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.CostAmount))
+                </th>
+                <th class="currency-right">
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.PreviousPaymentAmount))
+                </th>
+                <th class="currency-right">
+                    @GeneralHelper.DisplayName(header.GetType(), nameof(header.BillAmount))
+                </th>
+                <th class="currency-right">
+                    Pembayaran
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int educationYearIdPrev = 0;
+                int classLevelIdPrev = 0;
+            }
+
+            @for (int i = 0; i < Model.BillDataVMs.Count(); i++)
+            {
+                if (educationYearIdPrev != Model.BillDataVMs[i].EducationYear.EducationYearId && classLevelIdPrev != Model.BillDataVMs[i].EducationCost.ClassLevel.ClassLevelId)
+                {
+                    <tr>
+                        <td colspan="6" style="text-align: center; background-color: whitesmoke; font-weight: bold;">
+                            @Model.BillDataVMs[i].EducationYear.EducationYearName | @Model.BillDataVMs[i].EducationCost.ClassLevel.Name
+                        </td>
+                    </tr>
+                }
+                educationYearIdPrev = Model.BillDataVMs[i].EducationYear.EducationYearId;
+                classLevelIdPrev = Model.BillDataVMs[i].EducationCost.ClassLevel.ClassLevelId;
+
+                <tr>
+                    <td>
+                        @Model.BillDataVMs[i].EducationCost.CostName
+
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].BillAmount)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationCost.EducationCostId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationCostId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationCostId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].EducationYearId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].IsBilled)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].PreviousPaymentAmount)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].StudentId)
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].CostAmount)
+                    </td>
+                    <td class="currency-right">
+                        @Html.DisplayFor(m => Model.BillDataVMs[i].CostAmount)
+                    </td>
+                    <td class="currency-right">
+                        @Html.DisplayFor(m => Model.BillDataVMs[i].PreviousPaymentAmount)
+                    </td>
+                    <td class="currency-right">
+                        @Html.DisplayFor(m => Model.BillDataVMs[i].BillAmount)
+                    </td>
+                    <td class="currency-right">
+                        @Html.HiddenFor(m => Model.BillDataVMs[i].PaymentAmountStr)
+                        @Html.DisplayFor(m => Model.BillDataVMs[i].PaymentAmount)
+                        @Html.ValidationMessageFor(m => Model.BillDataVMs[i].PaymentAmountStr, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+            }
+
+            <tr>
+                <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                    @Html.LabelFor(model => model.PaymentAmmountSumStr)
+                </td>
+                <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                    @Html.DisplayFor(model => model.PaymentAmmountSum)
+                    @Html.HiddenFor(model => model.PaymentAmmountSumStr)
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                    @Html.LabelFor(model => model.MoneyReceivedAmountStr)
+                </td>
+                <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                    @Html.DisplayFor(model => model.MoneyReceivedAmount)
+                    @Html.HiddenFor(model => model.MoneyReceivedAmountStr)
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="4" style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                    @Html.LabelFor(model => model.ChangeStr)
+                </td>
+                <td style="text-align: right; background-color: whitesmoke; font-weight: bold;">
+                    @Html.DisplayFor(model => model.Change)
+                    @Html.HiddenFor(model => model.Change)
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="5" style="text-align: left; background-color: whitesmoke; font-weight: bold;">
+                    @Html.LabelFor(model => model.Notes) :
+                    @Html.DisplayFor(model => model.Notes)
+                    @Html.HiddenFor(model => model.Notes)
+                    @Html.HiddenFor(model => model.ActionSubmitOption)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="form-group" style="text-align: right; vertical-align: middle;">
+        @Html.ActionLink("Batal", "BillingDetail", new { id = Model.StudentId }, new { @class = "btn btn-default" })
+        <button type="submit" class="btn btn-default">Simpan Pembayaran</button>
+    </div>
+}
+<style type="text/css">
+    .currency-right {
+        text-align: right;
+    }
+
+    .reg_name {
+        max-width: 200px;
+    }
+
+    #footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        background-color: whitesmoke;
+        padding: inherit;
+        vertical-align: middle;
+    }
+</style>

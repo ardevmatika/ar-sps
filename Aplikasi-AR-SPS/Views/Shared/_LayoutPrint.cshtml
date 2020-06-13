@@ -1,0 +1,14 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="~/Content/Print.css" />
+</head>
+<body>
+    @RenderBody()
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(event) { 
+            window.print();
+        });
+    </script>
+</body>
+</html>

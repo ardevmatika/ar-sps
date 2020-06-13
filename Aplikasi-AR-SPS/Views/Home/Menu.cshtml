@@ -1,0 +1,75 @@
+﻿@model ClassLibrary.Service.MenuModule.Models.MenuSearchFormVM
+
+@{
+    ViewBag.Title = "Menu";
+}
+<br />
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-4">
+            @Html.EditorFor(model => model.MenuName, new { htmlAttributes = new { @class = "form-control col-lg-6", @placeholder = "Cari menu.." } })
+            <span class="input-group-btn">
+                <input class="btn btn-default" type="submit" value="Cari" />
+            </span>
+        </div>
+    </div>
+}
+
+@if (!String.IsNullOrEmpty(Model.MenuName))
+{
+    <p style="text-align: center;">
+        @Html.ActionLink("Bersihkan Pencarian", "Menu", "Home")
+    </p>
+}
+
+<div class="row">
+    <div class="col-md-2 col-md-offset-1">
+        <h2>Proses</h2>
+        <div class="list-group">
+            @foreach (var item in Model.MenuSearchDataVMs.Where(p => p.Category == ClassLibrary.Service.MenuModule.Models.MenuCategoryEnum.PROSES))
+            {
+                @Html.ActionLink(item.MenuName, item.Action, item.Contoller, null, new { @class = "list-group-item" })
+            }
+        </div>
+    </div>
+    <div class="col-md-2">
+        <h2>Informasi</h2>
+        <div class="list-group">
+            @foreach (var item in Model.MenuSearchDataVMs.Where(p => p.Category == ClassLibrary.Service.MenuModule.Models.MenuCategoryEnum.INFORMATION))
+            {
+                @Html.ActionLink(item.MenuName, item.Action, item.Contoller, null, new { @class = "list-group-item" })
+            }
+        </div>
+    </div>
+    <div class="col-md-2">
+        <h2>Laporan</h2>
+        <div class="list-group">
+            @foreach (var item in Model.MenuSearchDataVMs.Where(p => p.Category == ClassLibrary.Service.MenuModule.Models.MenuCategoryEnum.REPORT))
+            {
+                @Html.ActionLink(item.MenuName, item.Action, item.Contoller, null, new { @class = "list-group-item" })
+            }
+        </div>
+    </div>
+    <div class="col-md-2">
+        <h2>Master Data</h2>
+        <div class="list-group">
+            @foreach (var item in Model.MenuSearchDataVMs.Where(p => p.Category == ClassLibrary.Service.MenuModule.Models.MenuCategoryEnum.MASTER_DATA))
+            {
+                @Html.ActionLink(item.MenuName, item.Action, item.Contoller, null, new { @class = "list-group-item" })
+            }
+        </div>
+    </div>
+    <div class="col-md-2">
+        <h2>Pengaturan</h2>
+        <div class="list-group">
+            @foreach (var item in Model.MenuSearchDataVMs.Where(p => p.Category == ClassLibrary.Service.MenuModule.Models.MenuCategoryEnum.SETTING))
+            {
+                @Html.ActionLink(item.MenuName, item.Action, item.Contoller, null, new { @class = "list-group-item" })
+            }
+        </div>
+    </div>
+</div>

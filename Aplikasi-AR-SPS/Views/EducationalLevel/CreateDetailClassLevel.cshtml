@@ -1,0 +1,127 @@
+﻿@model ClassLibrary.Service.EducationalLevelModule.Models.EducationalLevelCreateFormVM
+@using ClassLibrary.Service.EducationalLevelModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Jenjang Pendidikan - Tambah Data";
+}
+
+<h2>Tambah Data</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Jenjang Pendidikan</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DisplayFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Detail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.Detail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DisplayFor(model => model.Detail)
+                @Html.ValidationMessageFor(model => model.Detail, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumberOfSchoolYears, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.NumberOfSchoolYears, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DisplayFor(model => model.NumberOfSchoolYears)
+                @Html.ValidationMessageFor(model => model.NumberOfSchoolYears, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumberOfSemestersPerSchoolYear, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.NumberOfSemestersPerSchoolYear, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DisplayFor(model => model.NumberOfSemestersPerSchoolYear)
+                @Html.ValidationMessageFor(model => model.NumberOfSemestersPerSchoolYear, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <br />
+
+        @if (Model.EducationalLevelCreateFormDetailClassLevelVMs != null)
+        {
+            <div>
+                @{ var header = new EducationalLevelCreateFormDetailClassLevelVM(); }
+                <table id="tableData" class="table nowrap" style="width:100%">
+                    <tr>
+                        <th>
+                            @GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassLevelOrder))
+                        </th>
+                        <th>
+                            @GeneralHelper.DisplayName(header.GetType(), nameof(header.Name))
+                        </th>
+                        <th>
+                            @GeneralHelper.DisplayName(header.GetType(), nameof(header.Detail))
+                        </th>
+                    </tr>
+
+                    @for (int i = 0; i < Model.EducationalLevelCreateFormDetailClassLevelVMs.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.HiddenFor(model => Model.EducationalLevelCreateFormDetailClassLevelVMs[i].ClassLevelOrder, new { htmlAttributes = new { @class = "form-control" } })
+                                Tahun Ajaran ke-@Html.DisplayFor(model => Model.EducationalLevelCreateFormDetailClassLevelVMs[i].ClassLevelOrder)
+                                @Html.ValidationMessageFor(model => Model.EducationalLevelCreateFormDetailClassLevelVMs[i].ClassLevelOrder, "", new { @class = "text-danger" })
+
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => Model.EducationalLevelCreateFormDetailClassLevelVMs[i].Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => Model.EducationalLevelCreateFormDetailClassLevelVMs[i].Name, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => Model.EducationalLevelCreateFormDetailClassLevelVMs[i].Detail, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => Model.EducationalLevelCreateFormDetailClassLevelVMs[i].Detail, "", new { @class = "text-danger" })
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        }
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(Submit.Back)" class="btn btn-default" />
+                <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(Submit.Save)" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 },
+                { responsivePriority: 3, targets: 2 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

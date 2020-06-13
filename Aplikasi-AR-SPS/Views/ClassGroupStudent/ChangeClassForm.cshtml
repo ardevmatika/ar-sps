@@ -1,0 +1,137 @@
+﻿@model ClassLibrary.Service.ClassGroupStudentModule.Models.ChangeClassFormVM
+
+@{
+    ViewBag.Title = "Pindah Kelas - Input";
+}
+<h2>Pindah Kelas</h2>
+<h4>Input</h4>
+<hr />
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<div style="margin-bottom: 200px;">
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.Name)
+            <br />
+            @Html.EditorFor(model => model.Student.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.IdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.IdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.NationalIdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BiologicalMotherName)
+            <br />
+            @Html.EditorFor(model => model.Student.BiologicalMotherName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.PlaceOfBirth)
+            <br />
+            @Html.EditorFor(model => model.Student.PlaceOfBirth, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BirthDate)
+            <br />
+            @{
+                var BirthDate = Model.Student.BirthDate.ToString("yyyy-MM-dd");
+            }
+            @Html.EditorFor(model => BirthDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.StudentId)
+    @Html.HiddenFor(model => model.EducationYearId)
+    @Html.HiddenFor(model => model.ClassLevelId)
+    @Html.HiddenFor(model => model.EnrollmentId)
+
+    <div class="col-md-12" style="font-weight: bold;">
+        @Html.DisplayFor(model => model.EducationYear.EducationYearName) - @Html.DisplayFor(model => model.ClassLevel.Name)
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="col-lg-12">
+        <div class="col-lg-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FromClassGroupId, htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(model => model.FromClassGroupId, Model.ClassGroups(), "", new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(model => model.FromClassGroupId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FromClassGroupMonthYearIdFromId, htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(model => model.FromClassGroupMonthYearIdFromId, Model.MonthYears(), "", new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(model => model.FromClassGroupMonthYearIdFromId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FromClassGroupMonthYearIdToId, htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(model => model.FromClassGroupMonthYearIdToId, Model.MonthYears(), "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.FromClassGroupMonthYearIdToId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ToClassGroupId, htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(model => model.ToClassGroupId, Model.ClassGroups(), "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ToClassGroupId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ToClassGroupMonthYearIdFromId, htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(model => model.ToClassGroupMonthYearIdFromId, Model.MonthYears(), "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ToClassGroupMonthYearIdFromId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ToClassGroupMonthYearIdToId, htmlAttributes: new { @class = "control-label col-md-6" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(model => model.ToClassGroupMonthYearIdToId, Model.MonthYears(), "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ToClassGroupMonthYearIdToId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Simpan" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "ChangeClass", new { StudentId = Model.StudentId })
+</div>

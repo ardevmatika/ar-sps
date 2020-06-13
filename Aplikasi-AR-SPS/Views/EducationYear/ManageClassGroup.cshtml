@@ -1,0 +1,141 @@
+﻿@model ClassLibrary.Service.EducationYearModule.Models.EducationYearManageClassGroupFromVM
+@using ClassLibrary.Service.EducationYearModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Edit - Tahun Ajaran - Kelola kelas - Tingkat Kelas" + Model.ClassLevelName;
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Tahun Ajaran - Kelola kelas - Tingkat Kelas @Model.ClassLevelName</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.EducationYearId)
+        @Html.HiddenFor(model => model.SchoolName)
+        @Html.HiddenFor(model => model.MonthFrom)
+        @Html.HiddenFor(model => model.YearFrom)
+        @Html.HiddenFor(model => model.MonthTo)
+        @Html.HiddenFor(model => model.YearTo)
+        @Html.HiddenFor(model => model.ClassLevelName)
+        @Html.HiddenFor(model => model.ClassLevelId)
+        @Html.HiddenFor(model => model.IsActive)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SchoolName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.SchoolName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MonthFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.MonthFrom)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.YearFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.YearFrom)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MonthTo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.MonthTo)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.YearTo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.YearTo)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.DisplayFor(model => model.IsActive)
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ClassLevelName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.ClassLevelName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Tambah rombongan belajar / kelas", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.ClassGroupName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ClassGroupName, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-5">
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitManageClassGroup.Add)" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+
+        <br />
+        @{ var header = new EducationYearManageClassGroupFromDetailClassGroupVM(); }
+        <table id="tableData" class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        @GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassGroupNameOld))
+                    </th>
+                    <th>
+                        @GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassGroupName))
+                    </th>
+                    <th>
+                        Hapus
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.EducationYearManageClassGroupFromDetailClassGroupVMs.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => Model.EducationYearManageClassGroupFromDetailClassGroupVMs[i].ClassGroupNameOld)
+                            @Html.HiddenFor(model => Model.EducationYearManageClassGroupFromDetailClassGroupVMs[i].ClassGroupNameOld)
+                            @Html.ValidationMessageFor(model => Model.EducationYearManageClassGroupFromDetailClassGroupVMs[i].ClassGroupNameOld, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.HiddenFor(model => Model.EducationYearManageClassGroupFromDetailClassGroupVMs[i].ClassGroupId)
+                            @Html.EditorFor(model => Model.EducationYearManageClassGroupFromDetailClassGroupVMs[i].ClassGroupName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model.EducationYearManageClassGroupFromDetailClassGroupVMs[i].ClassGroupName, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(model => Model.EducationYearManageClassGroupFromDetailClassGroupVMs[i].IsDeleteRequsted)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitManageClassGroup.Save)" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Kembali", Request.QueryString["ActionFrom"], new { id = Model.EducationYearId })
+</div>

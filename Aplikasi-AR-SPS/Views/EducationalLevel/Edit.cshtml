@@ -1,0 +1,160 @@
+﻿@model ClassLibrary.Service.EducationalLevelModule.Models.EducationalLevelEditFormVM
+@using ClassLibrary.Service.EducationalLevelModule.Models
+@using WebApplication.Web.UI.Helper
+
+@{
+    ViewBag.Title = "Edit - Jenjang Pendidikan";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Jenjang Pendidikan</h4>
+    <hr />
+    @if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+    {
+        <div class="alert alert-success alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            @ViewBag.messageInfo
+        </div>
+    }
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.EducationalLevelId, new { htmlAttributes = new { @class = "form-control" } })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Detail, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Detail, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Detail, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.NumberOfSchoolYears, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div>
+                @Html.HiddenFor(model => model.NumberOfSchoolYears)
+                @Html.EditorFor(model => model.NumberOfSchoolYears, new { htmlAttributes = new { @class = "form-control col-md-5", @disabled = "disabled" } })
+                <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitEdit.Add)" class="btn btn-default" />
+            </div>
+            @Html.ValidationMessageFor(model => model.NumberOfSchoolYears, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.NumberOfSemestersPerSchoolYear, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.NumberOfSemestersPerSchoolYear, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.NumberOfSemestersPerSchoolYear, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.CheckBoxFor(model => model.IsActive)
+            @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <br />
+
+    @if (Model.EducationalLevelEditFormDetailClassLevelVMs != null)
+    {
+        <div>
+            @{ var header = new EducationalLevelEditFormDetailClassLevelVM(); }
+            <table id="tableData" class="table nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>
+                            @GeneralHelper.DisplayName(header.GetType(), nameof(header.ClassLevelOrder))
+                        </th>
+                        <th>
+                            @GeneralHelper.DisplayName(header.GetType(), nameof(header.Name))
+                        </th>
+                        <th>
+                            @GeneralHelper.DisplayName(header.GetType(), nameof(header.Detail))
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.EducationalLevelEditFormDetailClassLevelVMs.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.HiddenFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].ClassLevelId, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].ClassLevelOrder, new { htmlAttributes = new { @class = "form-control" } })
+                                Tahun Ajaran ke-@Html.DisplayFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].ClassLevelOrder)
+                                @Html.ValidationMessageFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].ClassLevelOrder, "", new { @class = "text-danger" })
+
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].Name, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].Detail, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => Model.EducationalLevelEditFormDetailClassLevelVMs[i].Detail, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                @if (Model.EducationalLevelEditFormDetailClassLevelVMs.Count == (i + 1))
+                                {
+                                    if (Model.EducationalLevelEditFormDetailClassLevelVMs[i].IsRemoveable)
+                                    {
+                                        <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitEdit.Remove)" class="btn btn-default" />
+                                    }
+                                    else
+                                    {
+                                        <input type="button" value="@Model.GetEnumSubmitDisplayName(SubmitEdit.Remove)" onclick="return alert('Tidak bisa menghapus tingkat kelas ini karena terdapat data kelas.')"  class="btn btn-default" />
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitEdit.Cancel)" class="btn btn-default" />
+            <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitEdit.Save)" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 },
+                { responsivePriority: 3, targets: 3 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

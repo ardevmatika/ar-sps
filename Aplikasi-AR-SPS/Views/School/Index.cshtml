@@ -1,0 +1,187 @@
+﻿@model ClassLibrary.Service.SchoolModule.Models.SchoolSearchFormVM
+@using WebApplication.Web.UI.Helper
+@using ClassLibrary.Service.SchoolModule.Models
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Daftar - Sekolah";
+}
+
+<h2>Daftar</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Sekolah | @Html.ActionLink("Tambah Data", "Create")</h4>
+        <hr />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Cari" class="btn btn-default" />
+                <input type="button" value="Batal" onclick="window.location.href='@Url.Action("Index")'" class="btn btn-default" />
+            </div>
+        </div>
+        <hr />
+    </div>
+}
+
+@if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+{
+    <div class="alert alert-success alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        @ViewBag.messageInfo
+    </div>
+}
+
+@{ 
+    var header = new SchoolSearchDataVM(); 
+}
+<table id="tableData" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                @Html.ActionLink(GeneralHelper.DisplayName(header.GetType(), nameof(header.Name)), "Index", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary { { nameof(Model.ShortOrder), SortableColumn.NameAsc.ToString() } }))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.EducationalLevel.GetType(), nameof(header.EducationalLevel.Name))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Address))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.InstitutionBranch.GetType(), nameof(header.InstitutionBranch.InstitutionBranchName))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.IsActive))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Telephone))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Fax))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Website))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Email))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.PostalCode))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Province))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.City))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.District))
+            </th>
+            <th>
+                @GeneralHelper.DisplayName(header.GetType(), nameof(header.Region))
+            </th>
+            <th>
+                Tindakan
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Results)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EducationalLevel.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InstitutionBranch.InstitutionBranchName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telephone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fax)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Website)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostalCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Province)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.District)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Region)
+            </td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Menu
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li>@Html.ActionLink("Edit", "Edit", new { id = item.SchoolId })</li>
+                        <li>@Html.ActionLink("Detail", "Details", new { id = item.SchoolId }) </li>
+                        <li>@Html.ActionLink("Hapus", "Delete", new { id = item.SchoolId })</li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+Page @(Model.Results.PageCount < Model.Results.PageNumber ? 0 : Model.Results.PageNumber) of @Model.Results.PageCount
+
+@Html.PagedListPager(Model.Results, page => Url.Action("Index", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary() { { nameof(Model.CurrentPage), page } })))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 14 },
+                { responsivePriority: 3, targets: 1 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

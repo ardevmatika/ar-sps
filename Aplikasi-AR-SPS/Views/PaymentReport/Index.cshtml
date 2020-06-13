@@ -1,0 +1,424 @@
+﻿@model ClassLibrary.Service.PaymentReportModule.Models.PaymentReportSearchFormVM
+@using WebApplication.Web.UI.Helper
+@using ClassLibrary.Service.PaymentReportModule.Models
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/Chart.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="~/Scripts/Chart.min.js"></script>
+
+@{
+    ViewBag.Title = "Laporan - Pembayaran";
+}
+
+<h2>Laporan</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    <div class="form-horizontal">
+        <h4>Pembayaran</h4>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationYearId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.EducationYearId, Model.EducationYears(), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EducationYearId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Cari" class="btn btn-default" />
+                <input type="button" value="Batal" onclick="window.location.href='@Url.Action("Index")'" class="btn btn-default" />
+            </div>
+        </div>
+        <hr />
+    </div>
+}
+
+<script>
+    window.onload = function () {
+        loadPieTotalPayment();
+
+        loadLinePaymentPerMonth();
+
+        loadBarPaymentPerClassLevel();
+
+        loadBarPaymentPerClassGroup();
+    }
+</script>
+
+<div class="col-md-12">
+    <script type="text/javascript">
+        function loadPieTotalPayment() {
+            var ctx1 = document.getElementById("piecanvasTotalPayment").getContext("2d");
+            window.myBar = new Chart(ctx1,
+            {
+                type: 'pie',
+                data:
+                {
+                    labels: [
+                        "@(Model.PieChartDataPayment.PaymentLabelName + " | " + Html.DisplayFor(model => model.PieChartDataPayment.PaymentAmount))",
+                        "@(Model.PieChartDataPayment.BillLabelName + " | " + Html.DisplayFor(model => model.PieChartDataPayment.BillAmmount))"
+                    ],
+                    datasets:
+                        [
+                            {
+                                label: 'Penerimaan Pembayaran',
+                                backgroundColor: [
+                                    "#f990a7",
+                                    "#aad2ed",
+                                    "#9966FF",
+                                    "#99e5e5",
+                                    "#f7bd83",
+                                ],
+                                borderWidth: 2,
+                                data: [@Model.PieChartDataPayment.PaymentAmountPercentage.ToString().Replace(",","."), @Model.PieChartDataPayment.BillAmmountPercentage.ToString().Replace(",",".")]
+                            }
+                        ]
+                },
+                options:
+                {
+                    title:
+                    {
+                        display: true,
+                        text: "Total Penerimaan Pembayaran (%)"
+                    },
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    tooltips: {
+                        enabled: false
+                    }
+                }
+            });
+        }
+    </script>
+    <div class="col-md-6" style="text-align: center; margin-bottom: 50px;">
+        <canvas id="piecanvasTotalPayment"></canvas>
+    </div>
+
+    <script type="text/javascript">
+        function loadLinePaymentPerMonth() {
+            var ctx1 = document.getElementById("linePayamnetPerMonth").getContext("2d");
+            window.myBar = new Chart(ctx1,
+            {
+                type: 'line',
+                data:
+                {
+                    labels: [@Html.Raw(Model.LineChartDataPaymentVsBillLables)],
+                    datasets: [
+                        {
+                            label: "Pembayaran (Rp)",
+                            backgroundColor: "#f990a7",
+                            borderWidth: 2,
+                            data: [@Model.LineChartDataPaymentVsBillPayments]
+                        },
+                        {
+                            label: "Tagihan (Rp)",
+                            backgroundColor: "#aad2ed",
+                            borderWidth: 2,
+                            data: [@Model.LineChartDataPaymentVsBillBills]
+                        },
+                    ],
+                },
+                options:
+                {
+                    title:
+                    {
+                        display: true,
+                        text: "Pembayaran vs Tagihan Per Bulan (Rp)"
+                    },
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    //animation: {
+                    //    onComplete: function () {
+                    //        var chartInstance = this.chart;
+                    //        var ctx = chartInstance.ctx;
+
+                    //        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                    //        ctx.textAlign = 'center';
+                    //        ctx.textBaseline = 'bottom';
+
+                    //        this.data.datasets.forEach(function (dataset, i) {
+                    //            var meta = chartInstance.controller.getDatasetMeta(i);
+                    //            meta.data.forEach(function (bar, index) {
+                    //                var data = dataset.data[index];
+                    //                ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                    //            });
+                    //        });
+                    //    }
+                    //},
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                suggestedMin: 0,
+                                suggestedMax: @Model.LineChartDataPaymentVsBillMaxVal
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        enabled: true
+                    }
+                },
+            });
+        }
+    </script>
+    <div class="col-md-6" style="text-align: center; margin-bottom: 50px;">
+        <canvas id="linePayamnetPerMonth"></canvas>
+    </div>
+
+    <div class="col-md-12" style="text-align: center; margin-bottom: 50px; font-size: 10px;">
+        <h5>Penerimaan Pembayaran</h5>
+        <table id="tableData" class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    @foreach (var item in Model.LineChartDataPaymentVsBills.Select(s => s.MonthYearName))
+                    {
+                        <th>@item.Replace("\"", "")</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var item in Model.LineChartDataPaymentVsBills)
+                    {
+                        <td>@Html.DisplayFor(modelItem => item.PaymentAmount)</td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        function loadBarPaymentPerClassLevel() {
+            var ctx1 = document.getElementById("barPayamnetPerClassLevel").getContext("2d");
+            window.myBar = new Chart(ctx1,
+            {
+                type: 'bar',
+                data:
+                {
+                    labels: [@Html.Raw(Model.BarChartDataPaymentPerClassLevelLables)],
+                    datasets: [
+                        {
+                            label: "Pembayaran Per Tingkat Kelas (%)",
+                            backgroundColor: "#f990a7",
+                            data: [@Model.BarChartDataPaymentPerClassLevelPayments]
+                        },
+                        {
+                            label: "Tagihan Per Tingkat Kelas (%)",
+                            backgroundColor: "#aad2ed",
+                            data: [@Model.BarChartDataPaymentPerClassLevelBills]
+                        },
+                        {
+                            label: "Persentase Pembayaran/Tagihan (%)",
+                            backgroundColor: "#9966FF",
+                            data: [@Model.BarChartDataPaymentPerClassLevelPercentages]
+                        }
+                    ]
+                },
+                options:
+                {
+                    title:
+                    {
+                        display: true,
+                        text: "Pembayaran Per Tingkat Kelas (%)"
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        onComplete: function () {
+                            var chartInstance = this.chart;
+                            var ctx = chartInstance.ctx;
+
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                });
+                            });
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                suggestedMin: 0,
+                                suggestedMax: @Model.BarChartDataPaymentPerClassLevelMaxVal
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        enabled: true
+                    }
+                }
+            });
+        }
+    </script>
+    <div class="col-md-12" style="text-align: center; margin-bottom: 50px; height: 200px;">
+        <canvas id="barPayamnetPerClassLevel"></canvas>
+    </div>
+
+    <div class="col-md-12" style="text-align: center; margin-bottom: 50px;">
+
+        <table class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Tingkat Kelas</th>
+                    <th>Tagihan (% dari total tagihan)</th>
+                    <th>Pembayaran (% dari total tagihan)</th>
+                    <th>Persentase Pembayaran Per Tagihan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.BarChartDataPaymentPerClassLevels)
+                {
+                    <tr>
+                        <td>@item.ClassLevelName.Replace("\"", "")</td>
+                        <td>@Html.DisplayFor(m => item.Bill) @("(" + item.BillPercentageStr + "%)")</td>
+                        <td>@Html.DisplayFor(m => item.Payment) @("(" + item.PaymentPercentageStr + "%)")</td>
+                        <td>@item.PercentageStr%</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        function loadBarPaymentPerClassGroup() {
+            @*var ctx1 = document.getElementById("barPayamnetPerClassGroup").getContext("2d");
+            window.myBar = new Chart(ctx1,
+            {
+                type: 'horizontalBar',
+                data:
+                {
+                    labels: [@Html.Raw(Model.BarChartDataPayamnetPerClassGroupLables)],
+                    datasets:
+                    [
+                        {
+                            label: "Pembayaran Per Kelas (%)",
+                            backgroundColor: "#f990a7",
+                            borderWidth: 2,
+                            data: [@Model.BarChartDataPayamnetPerClassGroupPayments]
+                        },
+                        {
+                            label: "Tagihan Per Kelas (%)",
+                            backgroundColor: "#aad2ed",
+                            borderWidth: 2,
+                            data: [@Model.BarChartDataPayamnetPerClassGroupBills]
+                        },
+                        {
+                            label: "Persentase Pembayran/Tagihan Per Kelas (%)",
+                            backgroundColor: "#9966FF",
+                            borderWidth: 2,
+                            data: [@Model.BarChartDataPayamnetPerClassGroupPercentages]
+                        }
+                    ]
+                },
+                options:
+                {
+                    title:
+                    {
+                        display: true,
+                        text: "Pembayaran Per Kelas (%)"
+                    },
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    //animation: {
+                    //    onComplete: function () {
+                    //        var chartInstance = this.chart;
+                    //        var ctx = chartInstance.ctx;
+
+                    //        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                    //        ctx.textAlign = 'center';
+                    //        ctx.textBaseline = 'bottom';
+
+                    //        this.data.datasets.forEach(function (dataset, i) {
+                    //            var meta = chartInstance.controller.getDatasetMeta(i);
+                    //            meta.data.forEach(function (bar, index) {
+                    //                var data = dataset.data[index];
+                    //                ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                    //            });
+                    //        });
+                    //    }
+                    //},
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                suggestedMin: 120,
+                                suggestedMax: 120
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        enabled: true
+                    }
+                }
+            });*@
+        }
+    </script>
+    @*<div class="col-md-12" style="text-align: center; margin-bottom: 50px;">
+            <canvas id="barPayamnetPerClassGroup"></canvas>
+        </div>*@
+
+    <div class="col-md-12" style="text-align: center; margin-bottom: 50px;">
+
+        <table class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Tingkat Kelas</th>
+                    <th>Kelas</th>
+                    <th>Tagihan (% dari total tagihan)</th>
+                    <th>Pembayaran (% dari total tagihan)</th>
+                    <th>Persentase Pembayaran Per Tagihan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.BarChartDataPayamnetPerClassGroups)
+                {
+                    <tr>
+                        <td>@item.ClassGroup.ClassLevel.Name.Replace("\"", "")</td>
+                        <td>@item.ClassGroupName.Replace("\"", "")</td>
+                        <td>@Html.DisplayFor(m => item.Bill) @("(" + item.BillPercentageStr + "%)")</td>
+                        <td>@Html.DisplayFor(m => item.Payment) @("(" + item.PaymentPercentageStr + "%)")</td>
+                        <td>@item.PercentageStr%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-12" style="text-align: center; margin-bottom: 50px;">
+
+        <table class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Tingkat Kelas</th>
+                    <th>Nama Biaya</th>
+                    <th>Tagihan (% dari total tagihan)</th>
+                    <th>Pembayaran (% dari total tagihan)</th>
+                    <th>Persentase Pembayaran Per Tagihan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in   Model.barChartDataPayamnetPerEducationCosts)
+                {
+                    <tr>
+                        <td>@item.EducationCost.ClassLevel.Name.Replace("\"", "")</td>
+                        <td>@item.EducationCostName.Replace("\"", "")</td>
+                        <td>@Html.DisplayFor(m => item.Bill) @("(" + item.BillPercentageStr + "%)")</td>
+                        <td>@Html.DisplayFor(m => item.Payment) @("(" + item.PaymentPercentageStr + "%)")</td>
+                        <td>@item.PercentageStr%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,246 @@
+﻿@model ClassLibrary.Service.OverdueBillReportModule.Models.OverdueBillReportSearchFromVM
+@using WebApplication.Web.UI.Helper
+@using ClassLibrary.Service.OverdueBillReportModule.Models
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Laporan - Tunggakan Pembayaran / Lewat Jatuh Tempo";
+}
+
+<h2>Laporan</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    <div class="form-horizontal">
+        <h4>Tunggakan Pembayaran / Lewat Jatuh Tempo</h4>
+        <hr />
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationYearId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.EducationYearId, Model.EducationYears(), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EducationYearId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Cari" class="btn btn-default" />
+                <input type="button" value="Batal" onclick="window.location.href='@Url.Action("Index")'" class="btn btn-default" />
+            </div>
+        </div>
+        <hr />
+    </div>
+}
+<div class="form-horizontal">
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="Download Laporan (Tunggakan.xlsx)" onclick="window.location.href='@Url.Action("DownloadReport",new { EducationYearId = Model.EducationYearId})'" class="btn btn-default" />
+        </div>
+    </div>
+    <hr />
+</div>
+
+<table class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Tahun Ajaran</th>
+            <th class="right">Tunggakan</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Html.DisplayFor(model => model.EducationYearName)</td>
+            <td class="right">@Html.DisplayFor(model => model.OverdueBillSum)</td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="tableData1" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Tingkat Kelas</th>
+            <th class="right">Tunggakan</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OverdueBillPerClassLevelDataVMs)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.ClassLevel.Name)</td>
+                <td class="right">@Html.DisplayFor(m => item.OverdueBill)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table id="tableData2" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Tingkat Kelas</th>
+            <th>Kelas</th>
+            <th class="right">Tunggakan</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OverdueBillPerClassGroupDataVMs)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.ClassGroup.ClassLevel.Name)</td>
+                <td>@Html.DisplayFor(m => item.ClassGroup.ClassGroupName)</td>
+                <td class="right">@Html.DisplayFor(m => item.OverdueBill)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table id="tableData3" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Tingkat Kelas</th>
+            <th>Biaya Pendidikan</th>
+            <th>Tanggal Jatuh Tempo</th>
+            <th class="right">Tunggakan</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OverdueBillPerEducationCostDataVMs)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.EducationCost.ClassLevel.Name)</td>
+                <td>@Html.DisplayFor(m => item.EducationCost.CostName)</td>
+                <td>@Html.DisplayFor(m => item.EducationCost.DueDate)</td>
+                <td class="right">@Html.DisplayFor(m => item.OverdueBill)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table id="tableData4" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Tingkat Kelas
+            </th>
+            <th>
+                Kelas
+            </th>
+            <th>
+                Biaya Pendidikan
+            </th>
+            <th>
+                Tanggal Jatuh Tempo
+            </th>
+            <th>
+                NIS
+            </th>
+            <th>
+                Nama Siswa
+            </th>
+            <th>
+                Biaya
+            </th>
+            <th>
+                Pembayaran
+            </th>
+            <th class="right">
+                Tunggakan
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassGroup.ClassLevel.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassGroup.ClassGroupName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationCost.CostName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationCost.DueDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.IdentificationNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CostAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PaymentAmount)
+                </td>
+                <td class="right">
+                    @Html.DisplayFor(modelItem => item.BillAmount)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+Page @(Model.Results.PageCount < Model.Results.PageNumber ? 0 : Model.Results.PageNumber) of @Model.Results.PageCount
+
+@Html.PagedListPager(Model.Results, page => Url.Action("Index", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary() { { nameof(Model.CurrentPage), page } })))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData1').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+        $('#tableData2').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+        $('#tableData3').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+        $('#tableData4').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>
+
+<style type="text/css">
+    .right {
+        text-align: right;
+    }
+</style>

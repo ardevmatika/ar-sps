@@ -1,0 +1,112 @@
+﻿@model ClassLibrary.Service.EducationYearModule.Models.EducationYearDetailFromVM
+@using ClassLibrary.Service.EducationYearModule.Models
+
+@{
+    ViewBag.Title = "Hapus - Tahun Ajaran";
+}
+
+<h2>Hapus</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Tahun Ajaran</h4>
+        <hr />
+
+        @if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+        {
+            <div class="alert alert-success alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                @ViewBag.messageInfo
+            </div>
+        }
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.EducationYearId)
+        @Html.HiddenFor(model => model.MonthFrom)
+        @Html.HiddenFor(model => model.MonthTo)
+        @Html.HiddenFor(model => model.YearFrom)
+        @Html.HiddenFor(model => model.YearTo)
+        @Html.HiddenFor(model => model.SchoolId)
+        @Html.HiddenFor(model => model.School.Name)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.School, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.School.Name)
+                @Html.ValidationMessageFor(model => model.School, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MonthFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.MonthFrom)
+                @Html.ValidationMessageFor(model => model.MonthFrom, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.YearFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.YearFrom, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.YearFrom, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MonthTo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.MonthTo)
+                @Html.ValidationMessageFor(model => model.MonthTo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.YearTo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.YearTo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.YearTo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.DisplayFor(model => model.IsActive)
+                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        @if (Model.IsDeletable())
+        {
+            <div class="form-group">
+                @Html.Label("Apakah Anda yakin akan menghapus data ini?", htmlAttributes: new { @class = "control-label" })
+                <br /><br />
+                <div class="col-md-offset-2 col-md-10">
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Cancel)" class="btn btn-default" />
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Delete)" class="btn btn-default" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.Label("Data ini hanya bisa dinonaktifkan (karena terdapat data kelas dan biaya pendidikan), apakah Anda yakin akan menonaktifkan data ini?", htmlAttributes: new { @class = "control-label" })
+                <br /><br />
+                <div class="col-md-offset-2 col-md-10">
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Cancel)" class="btn btn-default" />
+                    <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Deactivate)" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>

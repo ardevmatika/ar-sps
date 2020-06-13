@@ -1,0 +1,220 @@
+﻿@model ClassLibrary.Service.PaymentInformationModule.Models.PaymentInformationSearchFormVM
+@using WebApplication.Web.UI.Helper
+@using ClassLibrary.Service.PaymentInformationModule.Models
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Daftar - Pembayaran";
+}
+
+<h2>Daftar</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Pembayaran</h4>
+        <hr />
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.StudentName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.StudentName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StudentName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.IdentificationNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.IdentificationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.IdentificationNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NationalIdentificationNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NationalIdentificationNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PaymentDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PaymentDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PaymentDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ReceiptNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ReceiptNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ReceiptNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PaymentOfficerName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PaymentOfficerName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PaymentOfficerName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EducationCostName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EducationCostName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EducationCostName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Cari" class="btn btn-default" />
+                <input type="button" value="Batal" onclick="window.location.href='@Url.Action("Index")'" class="btn btn-default" />
+            </div>
+        </div>
+        <hr />
+    </div>
+}
+
+@if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+{
+    <div class="alert alert-success alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        @ViewBag.messageInfo
+    </div>
+}
+
+<table id="tableData" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Nama Siswa
+            </th>
+            <th>
+                NIS
+            </th>
+            <th>
+                NISN
+            </th>
+            <th>
+                Tanggal pembayaran
+            </th>
+            <th>
+                Nomor Kwitansi
+            </th>
+            <th>
+                Total Pembayaran
+            </th>
+            <th>
+                Biaya Pendidikan - Pembayaran
+            </th>
+            <th>
+                Petugas Pembayaran
+            </th>
+            <th>
+                Uang Diterima
+            </th>
+            <th>
+                Kembalian
+            </th>
+            <th>
+                Catatan
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.Student.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.Student.IdentificationNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.Student.NationalIdentificationNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.PaymentDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.PaymentId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.PaymentAmountSum)
+                </td>
+                <td>
+                    @foreach (var educationYearItem in item.Payment.PaymentDetails.Select(pd => pd.EducationCost.EducationYear).Distinct())
+                    {
+                        <ul>
+                            <li>
+                                @Html.DisplayFor(ey => educationYearItem.EducationYearName)
+                                <ul>
+                                    @foreach (var paymentDetailItem in item.Payment.PaymentDetails.Where(pd => pd.EducationCost.EducationYear.EducationYearId == educationYearItem.EducationYearId))
+                                    {
+                                        <li>
+                                            @Html.DisplayFor(pd => paymentDetailItem.EducationCost.CostName)
+                                            <span> - </span>
+                                            @Html.DisplayFor(pd => paymentDetailItem.EducationCost.ClassLevel.Name)
+                                            <span> - </span>
+                                            @Html.DisplayFor(pd => paymentDetailItem.PaymentAmount)
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.PaymentOfficer.Name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.MoneyReceivedAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.Change)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Payment.Notes)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+Page @(Model.Results.PageCount < Model.Results.PageNumber ? 0 : Model.Results.PageNumber) of @Model.Results.PageCount
+
+@Html.PagedListPager(Model.Results, page => Url.Action("Index", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary() { { nameof(Model.CurrentPage), page } })))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 7 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

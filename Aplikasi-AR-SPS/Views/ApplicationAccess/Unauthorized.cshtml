@@ -1,0 +1,53 @@
+﻿@model ClassLibrary.Service.ApplicationAccessModule.Models.UnauthorizedFormVM
+@using WebApplication.Web.UI.Helper
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Akses Tidak Diperbolehkan";
+}
+<h2>Akses Tidak Diperbolehkan</h2>
+<div class="form-horizontal">
+    <h4>@Model.ModuleName | <a href="@Model.Url">@Model.Url</a> | Modul ini hanya bisa diakses oleh:</h4>
+    <hr />
+</div>
+<table class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Users)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+Page @(Model.Users.PageCount < Model.Users.PageNumber ? 0 : Model.Users.PageNumber) of @Model.Users.PageCount
+
+@Html.PagedListPager(Model.Users, page => Url.Action("Unauthorized", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary() { { nameof(Model.CurrentPage), page } })))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>

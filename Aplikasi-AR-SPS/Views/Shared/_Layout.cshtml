@@ -1,0 +1,195 @@
+﻿@using Microsoft.AspNet.Identity
+@using ClassLibrary.Service.ActivationModule.Models
+@using WebApplication.Web.UI.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - AR-SPS</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @*<link rel="stylesheet" type="text/css" href="~/Content/DataTables/datatables.css" />
+        <script type="text/javascript" src="~/Content/DataTables/datatables.js"></script>*@
+
+
+    <link rel="stylesheet" type="text/css" href="~/Content/DataTables/DataTables-1.10.20/css/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/DataTables/Responsive-2.2.3/css/responsive.bootstrap.css" />
+
+    <script type="text/javascript" src="~/Content/DataTables/DataTables-1.10.20/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="~/Content/DataTables/DataTables-1.10.20/js/dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="~/Content/DataTables/Responsive-2.2.3/js/dataTables.responsive.js"></script>
+    <script type="text/javascript" src="~/Content/DataTables/Responsive-2.2.3/js/responsive.bootstrap.js"></script>
+    <script>
+        (function ($) {
+            $.fn.currencyInput = function () {
+                this.each(function () {
+                    $(this).keypress(function (evt) {
+                        var charCode = (evt.which) ? evt.which : event.keyCode;
+                        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                            if (charCode == 44 && !this.value.includes(",")) {
+                                return true;
+                            }
+                            return false;
+                        }
+                        return true;
+                    });
+                    $(this).focusin(function () {
+                        if (this.value == "0,00") {
+                            $(this).val("");
+                        }
+                        if (this.value.includes(".")) {
+                            var clearVal = this.value.split(".").join("");
+                            $(this).val(clearVal);
+                        }
+                    });
+
+                    $(this).focusout(function () {
+                        var isFormated = false;
+                        if (this.value.includes(",") && this.value.includes(".")) {
+                            isFormated = true;
+                        }
+                        if (!isFormated) {
+                            var strVal = this.value;
+
+                            if (this.value == "" || this.value == null) {
+                                strVal = "0";
+                            } else {
+                                if (strVal.includes(",")) {
+                                    strVal = strVal.replace(",", ".");
+                                }
+                                var value = parseFloat(strVal);
+                                var formattedValue = value.toLocaleString('id-ID');
+                                if (!formattedValue.includes(",")) {
+                                    formattedValue = formattedValue + ",00";
+                                }
+                                $(this).val(formattedValue);
+                            }
+                        }
+                    });
+                });
+            };
+        })(jQuery);
+    </script>
+
+    <style type="text/css">
+        .currency {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    @{
+        ActivationDataVM activationData = (ActivationDataVM)Session[SessionEnum.ACTIVATION_DATA.ToString()];
+    }
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("AR-SPS", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Proses <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Pembayaran", "Index", "Payment")</li>
+                            <li>@Html.ActionLink("Pembatalan Pembayaran", "Index", "PaymentCancellation")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Registrasi Biaya Pilihan", "Index", "EducationCostOptionalRegistration")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Informasi <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Tagihan dan Pembayaran", "Index", "BillAndPaymentInformation")</li>
+                            <li>@Html.ActionLink("Riwayat Pembayaran", "Index", "PaymentInformation")</li>
+                            <li>@Html.ActionLink("Riwayat Pembatalan Pembayaran", "Index", "PaymentCancellationInformation")</li>
+                            <li>@Html.ActionLink("Data Siswa", "Index", "StudentInformation")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Laporan <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Penerimaan Pembayaran", "Index", "PaymentReport")</li>
+                            <li>@Html.ActionLink("Tunggakan Pembayaran / Lewat Jatuh Tempo", "Index", "OverdueBillReport")</li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Master Data <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Yayasan / Lembaga", "Index", "Institution")</li>
+                            <li>@Html.ActionLink("Jenjang Pendidikan", "Index", "EducationalLevel")</li>
+                            <li>@Html.ActionLink("Sekolah", "Index", "School")</li>
+                            <li>@Html.ActionLink("Tahun Ajaran dan Rombongan Belajar (Kelas)", "Index", "EducationYear")</li>
+                            <li>@Html.ActionLink("Data Siswa", "Index", "Student")</li>
+                            <li>@Html.ActionLink("Biaya Pendidikan", "Index", "EducationCost")</li>
+                            <li>@Html.ActionLink("Penempatan Siswa ke Kelas dan Pindah Kelas", "Index", "ClassGroupStudent")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pengaturan <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Aktivasi Aplikasi / Tingkatkan Lisensi", "Details", "Activation")</li>
+                            <li>@Html.ActionLink("Koneksi Database", "Index", "DatabaseConnection")</li>
+                            <li>@Html.ActionLink("User dan Akses Aplikasi", "Index", "UserAccess")</li>
+                        </ul>
+                    </li>
+                    <li>
+                        @if (Request.IsAuthenticated)
+                        {
+                            using (Html.BeginForm("Logout", "ApplicationAccess", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="javascript:document.getElementById('logoutForm').submit()">@User.Identity.GetUserName() (Logout)</a></li>
+                                </ul>
+                            }
+                        }
+                        else
+                        {
+                            <ul class="nav navbar-nav navbar-right">
+                                <li>@Html.ActionLink("Log in", "Login", "ApplicationAccess", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                            </ul>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @if (activationData.LicenseLevel == LicenseLevelEnum.LEVEL_0 && activationData.Status == ActivationStatusEnum.NOT_ACTIVATED_TRIAL)
+        {
+            <div class="panel panel-default" style="margin-top: 20px;">
+                <div class="panel-body">
+                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Aplikasi belum diaktivasi, aplikasi berjalan dengan model "Trial", data yang diinput akan dihapus ketika aplikasi ditutup. Silahkan aktivasi aplikasi dari menu Pengaturan.
+                </div>
+            </div>
+        }
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - AR-SPS | ID Perangkat: @activationData.DeviceId | @Html.ActionLink("Pengembang Aplikasi", "Contact", "Home")</p>
+        </footer>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input.currency').currencyInput();
+            $('input.currency').attr("autocomplete", "off");
+            $('input#License').attr("autocomplete", "off");
+            $('input#SerialNumber').attr("autocomplete", "off");
+        });
+    </script>
+
+</body>
+</html>

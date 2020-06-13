@@ -1,0 +1,150 @@
+﻿@model ClassLibrary.Service.UserAccessModule.Models.UserAccessDetailVM
+@using ClassLibrary.Service.UserAccessModule.Models
+@using System.Security.Claims
+
+@{
+    ViewBag.Title = "Hapus";
+}
+
+<h2>Hapus</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>User Akses</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.UserId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Tittle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Tittle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Tittle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UnitDivisionDepartment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.UnitDivisionDepartment, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.UnitDivisionDepartment, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.WhatsAppNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.WhatsAppNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.WhatsAppNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TelephoneExtentionNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.TelephoneExtentionNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TelephoneExtentionNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.IsActive)
+                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UserAccessDetailDetailApplicationModuleVMs, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div id="ListModule">
+                    @for (int i = 0; i < Model.UserAccessDetailDetailApplicationModuleVMs.Count; i++)
+                    {
+                        @Html.DisplayFor(model => model.UserAccessDetailDetailApplicationModuleVMs[i].IsSelected)
+                        <span>&nbsp;</span>
+                        @Html.DisplayFor(model => model.UserAccessDetailDetailApplicationModuleVMs[i].ModuleDisplayName)
+                        @Html.HiddenFor(model => model.UserAccessDetailDetailApplicationModuleVMs[i].Module)
+                        @Html.HiddenFor(model => model.UserAccessDetailDetailApplicationModuleVMs[i].ApplicationModuleId)
+                        <br />
+                    }
+                </div>
+                @Html.ValidationMessageFor(model => model.UserAccessDetailDetailApplicationModuleVMs, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @{
+            var identity = (ClaimsIdentity)User.Identity;
+        }
+
+        @if (identity.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value.ToString() == Model.UserId.ToString())
+        {
+            <div>
+                <b>Tidak bisa dihapus karena anda sedang login.</b>
+            </div>
+            <br />
+            <br />
+        }
+        else
+        {
+            if (Model.IsDeletable())
+            {
+                <div class="form-group">
+                    @Html.Label("Apakah Anda yakin akan menghapus data ini?", htmlAttributes: new { @class = "control-label" })
+                    <br /><br />
+                    <div class="col-md-offset-2 col-md-10">
+                        <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(Submit.Cancel)" class="btn btn-default" />
+                        <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(Submit.Delete)" class="btn btn-default" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    @Html.Label("Data ini hanya bisa dinonaktifkan (karena terdapat data pembayaran, pembatalan pembayaran), apakah Anda yakin akan menonaktifkan data ini?", htmlAttributes: new { @class = "control-label" })
+                    <br /><br />
+                    <div class="col-md-offset-2 col-md-10">
+                        <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(Submit.Cancel)" class="btn btn-default" />
+                        <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(Submit.Deactivate)" class="btn btn-default" />
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

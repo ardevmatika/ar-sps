@@ -1,0 +1,110 @@
+﻿@model PaymentVM
+@using ClassLibrary.Service.PaymentModule.Models
+@using WebApplication.Web.UI.Helper
+@{
+    ViewBag.Title = "Print";
+    Layout = "~/Views/Shared/_LayoutPrint.cshtml";
+}
+
+@{
+    var header = new PaymentDetailVM();
+}
+
+<p style="text-align: center;">
+    @Model.Institution.InstitutionName<br />
+    @Model.Institution.Address
+    @Model.Institution.Region - @Model.Institution.District - @Model.Institution.City
+    Fax. @(String.IsNullOrEmpty(Model.Institution.Fax) ? "-" : Model.Institution.Fax)
+    Telp. @(String.IsNullOrEmpty(Model.Institution.Telephone) ? "-" : Model.Institution.Telephone)
+    Email.  @(String.IsNullOrEmpty(Model.Institution.Email) ? "-" : Model.Institution.Email)
+</p>
+
+<hr />
+<table style="width: 100%;">
+    <tr>
+        <td>
+            No. @Model.PaymentId | @Model.Student.Name (@Model.Student.IdentificationNumber)
+        </td>
+        <td style="text-align: right;">
+            Pertugas : @Model.PaymentOfficer.Name
+        </td>
+    </tr>
+</table>
+<hr />
+<table style="width: 100%;">
+    @{
+        int educationYearIdPrev = 0;
+        int classLevelIdPrev = 0;
+    }
+
+    @for (int i = 0; i < Model.PaymentDetailVMs.Count(); i++)
+    {
+        if (educationYearIdPrev != Model.PaymentDetailVMs[i].EducationYear.EducationYearId && classLevelIdPrev != Model.PaymentDetailVMs[i].EducationCost.ClassLevel.ClassLevelId)
+        {
+            <tr>
+                <td colspan="3" style="text-align: center; ont-weight: bold;">
+                    @Model.PaymentDetailVMs[i].EducationYear.EducationYearName | @Model.PaymentDetailVMs[i].EducationCost.ClassLevel.Name
+                </td>
+            </tr>
+        }
+        educationYearIdPrev = Model.PaymentDetailVMs[i].EducationYear.EducationYearId;
+        classLevelIdPrev = Model.PaymentDetailVMs[i].EducationCost.ClassLevel.ClassLevelId;
+
+        <tr>
+            <td>
+                @Model.PaymentDetailVMs[i].EducationCost.CostName
+            </td>
+            <td style="text-align: right;">
+                @Html.DisplayFor(m => Model.PaymentDetailVMs[i].BillAmount)
+            </td>
+            <td style="text-align: right;">
+                @Html.DisplayFor(m => Model.PaymentDetailVMs[i].PaymentAmount)
+            </td>
+        </tr>
+    }
+</table>
+<table style="width: 100%;">
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="2" style="text-align: left;">
+            @Html.LabelFor(model => model.PaymentAmmountSum)
+        </td>
+        <td style="text-align: right;">
+            @Html.DisplayFor(model => model.PaymentAmmountSum)
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2" style="text-align: left;">
+            @Html.LabelFor(model => model.MoneyReceivedAmount)
+        </td>
+        <td style="text-align: right;">
+            @Html.DisplayFor(model => model.MoneyReceivedAmount)
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2" style="text-align: left;">
+            @Html.LabelFor(model => model.Change)
+        </td>
+        <td style="text-align: right;">
+            @Html.DisplayFor(model => model.Change)
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <td colspan="3" style="text-align: left;">
+            @Html.LabelFor(model => model.Notes) :
+            @Html.DisplayFor(model => model.Notes)
+        </td>
+    </tr>
+</table>
+<hr />
+@Html.DisplayFor(model => model.PaymentDate)
+<hr />

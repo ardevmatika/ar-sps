@@ -1,0 +1,239 @@
+﻿@model ClassLibrary.Service.BillAndPaymentInformationModule.Models.BillAndPaymentInformationSearchFormVM
+@using WebApplication.Web.UI.Helper
+@using ClassLibrary.Service.BillAndPaymentInformationModule.Models
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Informasi - Tagihan dan Pembayaran";
+}
+
+<h2>Informasi</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    <div class="form-horizontal">
+        <h4>Tagihan dan Pembayaran</h4>
+        <hr />
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EducationYearId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.EducationYearId, Model.EducationYears(), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EducationYearId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IdentificationNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.IdentificationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IdentificationNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Cari" class="btn btn-default" />
+                <input type="button" value="Batal" onclick="window.location.href='@Url.Action("Index")'" class="btn btn-default" />
+            </div>
+        </div>
+        <hr />
+    </div>
+}
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="Download Informasi (.xlsx)" onclick="window.location.href='@Url.Action("DownloadBillAndPaymentInformation",new { EducationYearId = Model.EducationYearId, IdentificationNumber = Model.IdentificationNumber})'" class="btn btn-default" />
+        </div>
+    </div>
+    <hr />
+</div>
+
+<div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.Name)
+            <br />
+            @Html.EditorFor(model => model.Student.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.IdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.IdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.NationalIdentificationNumber)
+            <br />
+            @Html.EditorFor(model => model.Student.NationalIdentificationNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BiologicalMotherName)
+            <br />
+            @Html.EditorFor(model => model.Student.BiologicalMotherName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.PlaceOfBirth)
+            <br />
+            @Html.EditorFor(model => model.Student.PlaceOfBirth, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.Student.BirthDate)
+            <br />
+            @{
+                var BirthDate = (Model.Student == null ? "" : Model.Student.BirthDate.ToString("yyyy-MM-dd"));
+            }
+            @Html.EditorFor(model => BirthDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+    </div>
+    <div class="form-group">
+        <table class="table nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Tahun Ajaran
+                    </th>
+                    <th>
+                        Kelas
+                    </th>
+                    <th>
+                        Efektif
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Enrollments)
+                {
+                    <tr>
+                        <td>
+                            @item.ClassGroup.EducationYear.EducationYearName
+                        </td>
+                        <td>
+                            @item.ClassGroup.ClassLevel.Name - @item.ClassGroup.ClassGroupName
+                        </td>
+                        <td>
+                            @(item.EffectiveMonthFromName + " - " + item.EffectiveMonthToName)
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+
+<table class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th style="text-align: center;" colspan="2">@Html.DisplayFor(model => model.EducationYearName)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Total Biaya</td>
+            <td class="right">@Html.DisplayFor(model => model.CostAmmount)</td>
+        </tr>
+        <tr>
+            <td>Total Pembayaran</td>
+            <td class="right">@Html.DisplayFor(model => model.PaymentAmmount)</td>
+        </tr>
+        <tr>
+            <td>Tagihan</td>
+            <td class="right">@Html.DisplayFor(model => model.BillAmmount)</td>
+        </tr>
+        <tr>
+            <td>Tagihan Lewat Jatuh Tempo</td>
+            <td class="right">@Html.DisplayFor(model => model.OverdueBillAmmount)</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold;">Total Tagihan</td>
+            <td style="font-weight: bold;" class="right">@Html.DisplayFor(model => model.TotalBillAmmount)</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<br />
+
+<table id="tableData1" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Tingkat Kelas
+            </th>
+            <th>
+                Biaya Pendidikan
+            </th>
+            <th>
+                Tanggal Jatuh Tempo
+            </th>
+            <th class="right">
+                Biaya
+            </th>
+            <th class="right">
+                Pembayaran
+            </th>
+            <th class="right">
+                Tagihan
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassGroup.ClassLevel.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationCost.CostName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationCost.DueDate)
+                </td>
+                <td class="right">
+                    @Html.DisplayFor(modelItem => item.CostAmount)
+                </td>
+                <td class="right">
+                    @Html.DisplayFor(modelItem => item.PaymentAmount)
+                </td>
+                <td class="right">
+                    @Html.DisplayFor(modelItem => item.BillAmount)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+Page @(Model.Results.PageCount < Model.Results.PageNumber ? 0 : Model.Results.PageNumber) of @Model.Results.PageCount
+
+@Html.PagedListPager(Model.Results, page => Url.Action("Index", GeneralHelper.CombineRoute(Model.GetCurrentRoute(), new RouteValueDictionary() { { nameof(Model.CurrentPage), page } })))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tableData1').DataTable({
+            responsive: true,
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+            ],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+        });
+    });
+</script>
+
+<style type="text/css">
+    .right {
+        text-align: right;
+    }
+</style>

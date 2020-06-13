@@ -1,0 +1,106 @@
+﻿@model ClassLibrary.Service.EducationYearModule.Models.EducationYearDetailFromVM
+@using ClassLibrary.Service.EducationYearModule.Models
+
+@{
+    ViewBag.Title = "Detail - Tahun Ajaran";
+}
+
+<h2>Detail</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Tahun Ajaran</h4>
+    <hr />
+
+    @if (!String.IsNullOrEmpty(ViewBag.messageInfo))
+    {
+        <div class="alert alert-success alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            @ViewBag.messageInfo
+        </div>
+    }
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.EducationYearId)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.School, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.School.Name)
+            @Html.ValidationMessageFor(model => model.School, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MonthFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.MonthFromName)
+            @Html.ValidationMessageFor(model => model.MonthFrom, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.YearFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.YearFrom, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.YearFrom, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MonthTo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.MonthToName)
+            @Html.ValidationMessageFor(model => model.MonthTo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.YearTo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.YearTo, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.YearTo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.DisplayFor(model => model.IsActive)
+                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    
+    @foreach (var classLevel in Model.ClassLevels.OrderBy(cl => cl.ClassLevelOrder))
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@classLevel.Name | @Html.ActionLink("Kelola", "ManageClassGroup", new { EducationYearId = Model.EducationYearId, ClassLevelId = classLevel.ClassLevelId, ActionFrom = "Details"}, new { @style = "color: blue;" })</h3>
+            </div>
+            <div class="panel-body">
+                @foreach (var item in Model.EducationYearDetailFormClassGroupVMs.Where(e => e.ClassLevelId == classLevel.ClassLevelId).OrderBy(cg => cg.ClassLevelName).ToList())
+                {
+                    @item.ClassGroupName
+                    <br />
+                }
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Edit)" class="btn btn-default" />
+            <input name="submit" type="submit" value="@Model.GetEnumSubmitDisplayName(SubmitDetail.Delete)" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Kembali ke daftar", "Index")
+</div>
